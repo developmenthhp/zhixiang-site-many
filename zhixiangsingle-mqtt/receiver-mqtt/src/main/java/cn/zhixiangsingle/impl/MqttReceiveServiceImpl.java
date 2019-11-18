@@ -71,8 +71,8 @@ import java.util.Map;
 public class MqttReceiveServiceImpl implements MqttReceiveService {
     private static final Logger logger = LoggerFactory
             .getLogger(MqttReceiveServiceImpl.class);
-    @Autowired
-    private SiteMapper siteMapper;
+    /*@Autowired
+    private SiteMapper siteMapper;*/
     @Autowired
     private GasBaseMapper gasBaseMapper;
     @Autowired
@@ -81,8 +81,8 @@ public class MqttReceiveServiceImpl implements MqttReceiveService {
     private RatplateBaseMapper ratplateBaseMapper;
     @Autowired
     private RatplateAlertMapper ratplateAlertMapper;
-    @Autowired
-    private TemperatureMapper temperatureMapper;
+    /*@Autowired
+    private TemperatureMapper temperatureMapper;*/
     @Autowired
     private FromWallBaseMapper fromWallBaseMapper;
     @Autowired
@@ -205,9 +205,9 @@ public class MqttReceiveServiceImpl implements MqttReceiveService {
             if(!IsEmptyUtils.isEmpty(dataSourceName)){
                 logger.info("--"+dataSourceName+"--");
                 DynamicDataSourceContextHolder.setDataSourceType(dataSourceName);
-               String lcOrHK = siteData.getLcOrHK();
-               String localPath = siteData.getLocalPath()+siteData.getSinglePath();
-               String imgPath = siteData.getImgPath();
+                String lcOrHK = siteData.getLcOrHK();
+                String localPath = siteData.getLocalPath()+siteData.getSinglePath();
+                String imgPath = siteData.getImgPath();
 
                 HaiKang haiKang = siteData.getHaiKang();
                 LeCheng leCheng = siteData.getLeCheng();
@@ -229,7 +229,7 @@ public class MqttReceiveServiceImpl implements MqttReceiveService {
                     String value = datas[2];
                     String currTime = DateUtils.formatDate(new Date(),"yyyy-MM-dd HH:mm:ss");
                     switch (type){
-                        case "tempecc":
+                        case "tempe":
                             /*String[] values = value.split(";");
                             TemperatureDTO temperatureDTO = new TemperatureDTO();
                             temperatureDTO.setHumidityVal(values[1].replace("00", "")+"%RH");
@@ -240,7 +240,7 @@ public class MqttReceiveServiceImpl implements MqttReceiveService {
                             temperatureDTO.setTime(DateUtils.formatDate(new Date(),"yyyy-MM-dd HH:mm:ss"));
                             temperatureDTO.setSdId(siteData.getSdId());*/
                             break;
-                        case "gascc":
+                        case "gas":
                             GasBaseDTO gasBaseDTO = new GasBaseDTO();
                             gasBaseDTO.setId(-1);
                             gasBaseDTO.setGasSensor(derivesNum);
@@ -264,7 +264,7 @@ public class MqttReceiveServiceImpl implements MqttReceiveService {
                                 gasAlarmMapper.insertSelective(gasAlarmDTO);
                             }
                             break;
-                        case "ratplatecc":
+                        case "ratplate":
                             RatplateBaseDTO ratplateBaseDTO = new RatplateBaseDTO();
                             ratplateBaseDTO.setRatplateArea("r");
                             ratplateBaseDTO.setRatplateRultionsTime("r");
@@ -277,20 +277,20 @@ public class MqttReceiveServiceImpl implements MqttReceiveService {
                                 ratplateAlertDTO.setRatplateArea(resultRatplateBase.getRatplateArea());
                                 ratplateAlertDTO.setRatplateDescription("声波传感检测到挡鼠板被拿起又或被移位,请及时处理..");
                                 ratplateAlertDTO.setStartTime(currTime);
+                                ratplateAlertDTO.setRatplateStartTime(currTime);
                                 ratplateAlertDTO.setRatplateStatus("1");
                                 ratplateAlertDTO.setRatplateSensor(derivesNum);
                                 if(!IsEmptyUtils.isEmpty(resultRatplateBase.getRatplateRultionsTime())){
                                     //开启抓拍
                                     Object resultData = getJsonObject(lcOrHK,siteData.getSdId(),resultRatplateBase.getRatplateRultionsTime()
-                                    ,localPath,imgPath,staticParams);
-
+                                            ,localPath,imgPath,staticParams);
                                     ratplateAlertDTO.setRatplateRultionsTime(resultData.toString());
                                 }
                                 ratplateAlertDTO.setSdId(resultRatplateBase.getSdId());
                                 ratplateAlertMapper.insertSelective(ratplateAlertDTO);
                             }
                             break;
-                        case "fromwallcc":
+                        case "fromwall":
                             FromWallBaseDTO fromWallBaseDTO = new FromWallBaseDTO();
                             fromWallBaseDTO.setFromwallArea("f");
                             fromWallBaseDTO.setFromwallSensor(derivesNum);
@@ -316,7 +316,7 @@ public class MqttReceiveServiceImpl implements MqttReceiveService {
                                 fromWallAlertMapper.insertSelective(fromWallAlertDTO);
                             }
                             break;
-                        case "slipperycc":
+                        case "slippery":
                             SlipperyBaseDTO slipperyBaseDTO = new SlipperyBaseDTO();
                             slipperyBaseDTO.setSlipperyArea("s");
                             slipperyBaseDTO.setSlipperySensor(derivesNum);
@@ -336,10 +336,10 @@ public class MqttReceiveServiceImpl implements MqttReceiveService {
                                 slipperyAlertMapper.insertSelective(slipperyAlertDTO);
                             }
                             break;
-                        case "cleancc":
-                            redisService.set("sensor_"+derivesNum+siteData.getSdId(), value);
+                        case "clean":
+                            redisService.set("sensor_"+derivesNum+siteData.getSdId(), Integer.parseInt(value));
                             break;
-                        case "switchcc":
+                        case "switch":
                             GasSwitchBaseDTO gasSwitchBaseDTO = new GasSwitchBaseDTO();
                             gasSwitchBaseDTO.setArea("a");
                             gasSwitchBaseDTO.setSensor(derivesNum);

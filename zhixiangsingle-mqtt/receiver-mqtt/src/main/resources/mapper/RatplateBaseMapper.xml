@@ -20,7 +20,7 @@
 				IFNULL(r.status,'-') status,
 			</if>
 			<if test="ratplateRultionsTime != null and ratplateRultionsTime != ''" >
-				IFNULL(r.ratplate_rultions_time,'-') temperatureSensor,
+				IFNULL(r.ratplate_rultions_time,'-') ratplateRultionsTime,
 			</if>
 			<if test="sdId != null" >
 				r.sdid sdId,
@@ -51,7 +51,7 @@
 				IFNULL(r.status,null) status,
 			</if>
 			<if test="ratplateRultionsTime != null and ratplateRultionsTime != ''" >
-				IFNULL(r.ratplate_rultions_time,null) temperatureSensor,
+				IFNULL(r.ratplate_rultions_time,null) ratplateRultionsTime,
 			</if>
 			<if test="sdId != null" >
 				r.sdid sdId,
